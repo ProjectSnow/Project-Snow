@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+</head>
+<body>
+  All this does is play music in your browser using the Web SDK
+
+
+  <script>
+    /*
+    *
+    * READ ALL OF THIS BEFORE COMPLETING THE INSTRUCTIONS
+    *
+    * A  demo to see if we can play a song from the api in our app using
+    * ionic (a framework that allows for development on multiple platforms)
+    * Here is a link to more that can be done with the api https://developer.spotify.com/console/
+    * (We will use the api to load in all the account information etc.)
+    * Here is a link to the ionic framework https://ionicframework.com
+    *
+    * To run this code you are going to need to install node.js https://nodejs.org/en/
+    *
+    * After installing node.js install ionic by using this command in your terminal.  npm install -g ionic
+    *
+    * Next go in to the directory that you want to start your project in and use the command. ionic start MyIonicProject blank
+    * You may need to click enter a few times to finish loading in the project (it will ask you some questions
+    * just click enter)
+    *
+    * Go into your project folder and look into the src folder and find the index.html folder and open it
+    *
+    * Delete everything in the index.html. Copy everything from here into the index.html file
+    *
+    * To run this you are going to want to make sure you are in your project folder, in this case it will be called MyIonicProject
+    *
+    * use the command. ionic serve
+    *
+    * After it runs a link will show up that looks something like this http://localhost:8100
+    * (the numbers might not be exactly the same). go to that link and music should start playing if everything was configured correctly
+    *
+    *
+    * IMPORTANT: make sure you add a token at line 65ish. It explains how to get a token there. Also I'm pretty sure a
+    * premium account is needed to play the music. let me know if something doesn't make sense or something doesnt work
+    * I recommend using a code editor like Visual Studios or WebStorm.
+    *
+    *
+    * */
+  </script>
+  <!-- This imports the sdk library -->
+  <script src="https://sdk.scdn.co/spotify-player.js"></script>
+
+  <script>
+    //This is required to instantiate the Player
+      window.onSpotifyWebPlaybackSDKReady = () => {
+          // You can now initialize Spotify.Player and use the SDK
+          let player = new Spotify.Player({
+              name: 'My Player',//will give the name the player
+              getOAuthToken: callback => {
+                  // Here you would get and refresh the authorization token when necessary.
+                  //It has not been implemented yet
+
+                  //For testing purposes In the callback function below you will need to manually enter a token
+                  //you can get it from here https://developer.spotify.com/documentation/web-playback-sdk/quick-start/#
+                  // Click the green button that says "Get your web playback sdk access token"
+                  //Enter the long string of numbers and letters on the line below
+                  callback('BQCQf0iwwUmedEfYcCKWbv0s7QR-p3T7_ipanKH6Ht92NnggyXVO6F8PpEsr2odIMCSMfrbgMWEdidsgii0NkDOzWkNyv39iG_i3dk9RQ90NAYVBR9DyyUs-2tEAYSPJgALzD0YhrAoaTOBdJzgdnoJwLyboLXIV');
+              },
+              volume: 0.5 //this sets the initial volume of the player
+          });
+
+          //This will connect our player to spotify
+          player.connect().then(success => {
+              if (success) {
+                  console.log('The Web Playback SDK successfully connected to Spotify!');
+              }
+
+          })
+
+          //This will wait until the player is fully connected and ready to be used
+          player.addListener('ready', ({ device_id }) => {
+              console.log('The Web Playback SDK is ready to play music!');
+              console.log('Device ID', device_id);
+
+              //This will play a track copy and past the tracks to play the different songs
+              play({
+                  playerInstance: player, //spotify:track:3gbBpTdY8lnQwqxNCcf795  //"spotify:track:3LlAyCYU26dvFZBDUIMb7a
+                  spotify_uri: 'spotify:track:3gbBpTdY8lnQwqxNCcf795', //spotify:track:1almCHdsfikRPfVB9VrEdT
+              });
+          })
+
+          //This plays a track on the player we just instantiated
+          const play = ({
+                            spotify_uri,
+                            playerInstance: {
+                                _options: {
+                                    getOAuthToken,
+                                    id
+                                }
+                            }
+                        }) => {
+              getOAuthToken(access_token => {
+                  //This makes a put request from the spotify api  which retrieves the song to be played
+                  fetch(`https://api.spotify.com/v1/me/player/play?device_id=${id}`, {
+                      method: 'PUT',
+                      body: JSON.stringify({ uris: [spotify_uri] }),
+                      headers: {
+                          'Content-Type': 'application/json',
+                          'Authorization': `Bearer ${access_token}`
+                      },
+                  });
+              });
+          };
+      };
+  </script>
+</body>
+</html>

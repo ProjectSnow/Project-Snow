@@ -1,0 +1,102 @@
+//this below code is an example of creating A "MediaPlayerController" object (instance of)
+//this is how you get a token in order to order access Apple music
+//it is important to note that this code is only used for android
+
+//import statements
+import com.apple.android.music.playback.controller.MediaPlayerController;
+import com.apple.android.music.playback.controller.MediaPlayerControllerFactory;
+
+
+TokenProvider tokenProvider = new TokenProvider() {
+    @Override
+    // public function which returns a string
+    public String getDeveloperToken() {
+        return developerToken;
+    }
+    @Override
+    // public function which returns a string
+    public String getUserToken() {
+        return userToken;
+    }
+};
+
+//eate an instance of MediaPlayerController "Player Controller", use the function createLocalController with parameters
+//mtext and TokenProvider
+MediaPlayerController playerController = MediaPlayerControllerFactory.createLocalController(context, tokenProvider);
+
+// This is an example of code which will create an instance of a PlaybackQueueItemProvider
+// this is how to fill the qeueu with music to be played
+// we will most likely have to find a way to do this for all music streaming platforms
+import com.apple.android.music.playback.controller.MediaPlayerController;
+import com.apple.android.music.playback.queue.CatalogPlaybackQueueItemProvider;
+MediaPlayerController playerController;
+CatalogPlaybackQueueItemProvider.Builder queueProviderBuilder = new CatalogPlaybackQueueItemProvider.Builder();
+builder.containers(MediaContainerType.ALBUM, "310730204");
+playerController.prepare(queueProviderBuilder.build(), true);
+
+
+// these are all methods to control the instance of a MediaPlayerControl
+import com.apple.android.music.playback.controller.MediaPlayerController;
+MediaPlayerController playerController;
+playerController.pause();                                                 // Pause playback
+playerController.play();                                                  // Start/resume playback
+playerController.seekToPosition(10_000L);                                 // Seek to 10 seconds from the beginning of the media
+playerController.stop();                                                  // Stop playback
+playerController.skipToNextItem();                                        // Skip to the next item in the playback queue
+playerController.skipToPreviousItem();                                    // Skip to the previous item in the playback queue
+playerController.setRepeatMode(PlaybackRepeatMode.REPAT_MODE_ALL);        // Change the current repeat mode
+playerController.setShuffleMode(PlaybackShuffleMode.SHUFFLE_MODE_SONGS);  // Change the current shuffle mode
+
+
+
+
+import com.apple.android.music.playback.controller.MediaPlayerController;
+MediaPlayerController playerController;
+playerController.getPlaybackState();    // Gets the current playback state (PAUSED, PLAYING, STOPPED)
+playerController.getCurrentPosition();  // Gets the position of the playback head, in milliseconds
+playerController.getDuration();         // Gets the duration of the current media, in milliseconds
+PlayerQueueItem currentQueueItem = playerController.getCurrentItem();        // Gets the currently playing playback queue item
+List<PlayerQueueIte> upcomingQueueItems = playerController.getQueueItems();  // Gets the list of playback queue items after the current item
+PlayerMediaItem currentMediaItem = currentQueueItem.getItem();               // Gets the media item associated with the playback queue item
+currentMediaItem.getTitle();                                                 // Gets the title of the media
+currentMediaItem.getAlbumTitle();                                            // Gets the title of the album the media belongs to
+currentMediaItem.getArtistName();                                            // Gets the name of the artist of the media
+
+
+
+import com.apple.android.music.playback.controller.MediaPlayerController;
+import com.apple.android.music.playback.model.PlaybackState;
+MediaPlayerController.Listener controllerListener = new MediaPlayerController.Listener {
+    @Override
+    public void onPlaybackStateChanged(@NonNull MediaPlayerController playerController, @PlaybackState int previousState, @PlaybackState int currentState) {
+        // Handle a change in the playback state
+    }
+    @Override
+    public void onCurrentItemChanged(@NonNull MediaPlayerController playerController, @Nullable PlayerQueueItem previousItem, @Nullable PlayerQueueItem currentItem) {
+        // Handle a change in the currently playing item
+    }
+};
+MediaPlayerController playerController;
+playerController.addListener(controllerListener);     // Register the listener
+playerController.removeListener(controllerListener);  // Unregister the listener
+
+
+
+import com.apple.android.music.playback.controller.MediaPlayerController;
+MediaPlayerController playerController;
+playerController.canSeek();                // Gets whether it is possible to seek in the current media
+playerController.canSkipToNextItem();      // Gets whether it is possible to skip to the next item
+playerController.canSkipToPreviousItem();  // Gets whether it is possible to skip to the previous item
+
+
+
+
+
+// resets thwe instance of the MediaPlayer instance
+import com.apple.android.music.playback.controller.MediaPlayerController;
+MediaPlayerController playerController;
+playerController.release();
+
+
+
+
